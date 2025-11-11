@@ -1,0 +1,66 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+you are Expert Flutter developer which uses bloc architecture when need. prefer to use Cubit
+
+# Project Structure Guide
+
+- The main entry point is [lib/main.dart](mdc:lib/main.dart), which initializes dependencies in [lib/core/ioc.dart](mdc:lib/core/ioc.dart) and sets up the app theme and home page.
+- State management uses the Bloc/Cubit pattern, with key cubits in [lib/core/cubit/](mdc:lib/core/cubit), [lib/home_page/presentation/cubit/](mdc:lib/home_page/presentation/cubit), and [lib/settings/cubit/](mdc:lib/settings/cubit).
+- The home screen is implemented in [lib/home_page/presentation/pages/home_page.dart](mdc:lib/home_page/presentation/pages/home_page.dart), which uses [DvarmalchusCubit](mdc:lib/home_page/presentation/cubit/dvarmalchus_cubit.dart) for business logic and state.
+- API and networking are handled by [lib/core/rest_client.dart](mdc:lib/core/rest_client.dart), with data models in [lib/core/network/response/](mdc:lib/core/network/response).
+- App-wide constants and colors are defined in [lib/core/constants/constants.dart](mdc:lib/core/constants/constants.dart).
+- Additional features and pages are in [lib/hashlamot/](mdc:lib/hashlamot), [lib/credits/](mdc:lib/credits), and [lib/settings/](mdc:lib/settings).
+- Tests are located in [test/](mdc:test).
+
+# lib Directory Tree
+
+lib/
+├── core/
+│   ├── constants/
+│   │   ├── assets.dart
+│   │   └── constants.dart
+│   ├── cubit/
+│   │   ├── analytics_cubit.dart
+│   │   └── analytics_state.dart
+│   ├── dm_pdf_viewer/
+│   │   ├── dm_pdf_viewer.dart
+│   │   ├── pdfviewer_cubit.dart
+│   │   └── pdfviewer_state.dart
+│   ├── network/
+│   │   └── response/
+│   │       ├── config.dart
+│   │       ├── config.g.dart
+│   │       ├── dvarmalchus.dart
+│   │       └── dvarmalchus.g.dart
+│   ├── hive_manager.dart
+│   ├── ioc.dart
+│   ├── rest_client.dart
+│   └── rest_client.g.dart
+├── credits/
+│   └── credits_page.dart
+├── hashlamot/
+│   └── hashlamot_page.dart
+├── home_page/
+│   └── presentation/
+│       ├── cubit/
+│       │   ├── dvarmalchus_cubit.dart
+│       │   └── dvarmalchus_state.dart
+│       └── pages/
+│           └── home_page.dart
+├── settings/
+│   ├── cubit/
+│   │   ├── settings_cubit.dart
+│   │   └── settings_state.dart
+│   └── settings_page.dart
+├── firebase_options.dart
+└── main.dart
+
+# Project Structure Pattern
+
+- Every page has its own directory, and inside it, its own cubits (state management logic). For example, the home page and its cubit are under `lib/home_page/presentation/pages/` and `lib/home_page/presentation/cubit/` respectively. The settings page and its cubit are under `lib/settings/` and `lib/settings/cubit/`.
+- This pattern is followed throughout the project for modularity and separation of concerns.
+- Core logic, shared resources, and reusable cubits are in the `core/` directory.
+- Additional features like credits and hashlamot have their own directories.
