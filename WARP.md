@@ -157,15 +157,16 @@ The app is designed primarily for Jewish users, with special attention to Israel
 ### Android Configuration (Successfully Tested)
 - **Flutter Version**: 3.35.6 (managed with FVM) ✅
 - **Dart Version**: 3.9.2 (supports SDK constraint `>=2.17.6 <4.0.0`) ✅
-- **Kotlin Version**: 1.8.10+ (minimum required by Flutter 3.35.6) ✅
-- **Android Gradle Plugin**: 8.1.1+ (working configuration) ✅
-- **Gradle Wrapper**: 8.5+ (working with current config) ✅
+- **Kotlin Version**: 2.1.0 (updated for 16 KB page size support) ✅
+- **Android Gradle Plugin**: 8.7.3 (required for 16 KB page size support) ✅
+- **Gradle Wrapper**: 8.9 (required for AGP 8.7.3) ✅
 - **Compile SDK**: Uses Flutter's default (usually 35+) ✅
 - **Min SDK**: Uses Flutter's default (usually 21+) ✅
 - **Namespace**: Required for AGP 8.x, defined in android block ✅
 - **Plugin Management**: Uses declarative plugins syntax (required by Flutter 3.35.6) ✅
 - **Java Version**: OpenJDK 21+ (requires Gradle 8.5+) ✅
 - **Memory Configuration**: 4GB JVM heap for Gradle builds ✅
+- **16 KB Page Size Support**: Enabled (required for Google Play as of Nov 1, 2025) ✅
 
 **Build Status**: ✅ Successfully building APKs and App Bundles
 **Signing Status**: ✅ Configured with correct production keystore (SHA1: 00:B6:73:41:6E:A7:B6:C8:6E:BB:EC:FE:FC:99:6A:AB:F3:C3:17:E2)
@@ -173,21 +174,41 @@ The app is designed primarily for Jewish users, with special attention to Israel
 **Last Verified**: Current build configuration confirmed working
 
 ### Common Build Issues (Resolved)
-- **✅ Kotlin Version Error**: Fixed - Updated to 1.8.10 in `android/build.gradle`
+- **✅ Kotlin Version Error**: Fixed - Updated to 2.1.0
 - **✅ CI/CD Builds**: Use `--android-skip-build-dependency-validation` flag to bypass version warnings
 - **✅ Legacy Null Safety**: Project fully migrated, no legacy flags needed
 - **✅ Plugin V1 Embedding**: All plugins upgraded to compatible versions (path_provider_android, shared_preferences_android, url_launcher_android)
 - **✅ Memory Issues**: Gradle JVM heap increased to 4GB to prevent OutOfMemoryError during builds
 - **✅ Empty Assets Directory**: Assets properly configured and building
 - **✅ Firebase/Google Services**: Plugin properly configured at end of `android/app/build.gradle`
-- **✅ CompileSdk 35 Compatibility**: AGP 8.1.1+ with namespace declaration working
-- **✅ AGP 8.x Compatibility**: Gradle 8.5+ with namespace configuration working
+- **✅ CompileSdk 35 Compatibility**: AGP 8.7.3 with namespace declaration working
+- **✅ AGP 8.x Compatibility**: Gradle 8.9 with namespace configuration working
 - **✅ Firebase Analytics with AGP 8.x**: `buildFeatures { buildConfig true }` configured
-- **✅ Java 21 Compatibility**: Working with Gradle 8.5+
+- **✅ Java 21 Compatibility**: Working with Gradle 8.9+
+- **✅ 16 KB Page Size Support**: AGP 8.7.3 with proper packaging options for uncompressed native libraries
 
-### Current Build Warnings (Non-blocking)
-- Version compatibility warnings for Gradle (8.5.0 vs recommended 8.7.0+)
-- Android Gradle Plugin warnings (8.1.1 vs recommended 8.6.0+)
-- Kotlin version warnings (1.8.10 vs recommended 2.1.0+)
+### 16 KB Page Size Support (Google Play Requirement)
+Starting November 1st, 2025, all new apps and updates to existing apps submitted to Google Play and targeting Android 15+ devices must support 16 KB page sizes on 64-bit devices.
 
-These warnings can be bypassed in CI/CD with `--android-skip-build-dependency-validation` flag.
+**Implementation Details**:
+- **AGP Version**: 8.7.3 (automatically handles 16 KB alignment for native libraries)
+- **Gradle Version**: 8.9 (required for AGP 8.7.3)
+- **Kotlin Version**: 2.1.0 (latest stable version)
+- **Packaging**: `useLegacyPackaging = false` for uncompressed native libraries with proper 16 KB alignment
+- **NDK Filters**: Explicitly defined for all supported architectures (armeabi-v7a, arm64-v8a, x86, x86_64)
+
+**Benefits**:
+- Lower app launch times (3-30% improvement)
+- Reduced power draw during app launch (4.56% reduction)
+- Faster camera launch times (4.48-6.60% improvement)
+- Improved system boot time (8% improvement)
+
+**Testing**:
+To test the app on 16 KB devices:
+```bash
+# Verify page size on device/emulator
+adb shell getconf PAGE_SIZE  # Should return 16384 for 16 KB devices
+
+# Verify APK is 16 KB aligned
+zipalign -c -P 16 -v 4 app-release.apk
+```

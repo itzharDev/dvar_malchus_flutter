@@ -270,7 +270,6 @@ class DvarmalchusCubit extends Cubit<DvarmalchusState> {
       final day = startOfWeek.add(Duration(days: i));
       return DateFormat('ddMMyyyy', 'en').format(day);
     });
-
     // Now call your download function with a progress callback.
     downloadAllPdfs(
       finalState.subjects,
@@ -383,7 +382,7 @@ class DvarmalchusCubit extends Cubit<DvarmalchusState> {
       List<Map<String, dynamic>> subjects, List<String> subjectIndexes) async {
     // Prepare a list of download tasks for files that do NOT exist.
     final List<_DownloadTask> tasks = [];
-
+    print('downloadAllPdfs');
     for (final subject in subjects) {
       final String title = subject['title'];
 
@@ -456,7 +455,7 @@ class DvarmalchusCubit extends Cubit<DvarmalchusState> {
             }
           }
         }
-      } else {
+      } else if (subject.containsKey('url') && subject['url'] != null) {
         // Fallback: use static URL if no urlMap is provided.
         final String url = subject['url'];
         for (final subjectIndex in subjectIndexes) {

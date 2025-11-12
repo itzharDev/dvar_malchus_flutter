@@ -487,6 +487,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     InkWell(
                                       splashColor: Colors.red,
                                       onTap: () {
+                                        var weekday = state.selectedDate.weekday == 7
+                                            ? 1
+                                            : state.selectedDate.weekday + 1;
                                         var subjectIndex =
                                             DateFormat('ddMMyyyy', 'en')
                                                 .format(state.selectedDate);
@@ -503,9 +506,18 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                         locator.get<AnalyticsCubit>().logEvent(
                                             state.subjects[index]['title']!);
                                         
+                                        // Get the correct URL - check if urlMap exists for day-dependent content
+                                        String? pdfUrl;
+                                        if (state.subjects[index]['urlMap'] != null) {
+                                          // For day-dependent content, get the URL for the current weekday
+                                          pdfUrl = state.subjects[index]['urlMap'][weekday];
+                                        } else {
+                                          // For static content, use the 'url' field
+                                          pdfUrl = state.subjects[index]['url'];
+                                        }
+                                        
                                         // Check if user wants to use external PDF viewer
                                         var useExternalViewer = locator.get<SettingsCubit>().readUseExternalPdfViewer();
-                                        
                                         if (useExternalViewer) {
                                           // Open with external PDF viewer
                                           OpenFile.open(localPdfPath);
@@ -520,7 +532,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                     ['title']!,
                                                 localPdfPath: localPdfPath,
                                                 pdfPath:
-                                                    'https://s3.amazonaws.com/DvarMalchus/${state.subjects[index]['url']}',
+                                                    'https://s3.amazonaws.com/DvarMalchus/$pdfUrl',
                                               ),
                                             ),
                                           );
